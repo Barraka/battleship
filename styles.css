@@ -1,0 +1,107 @@
+:root {
+    --cellSize: calc(min(100vh, 100vw) / 10*0.7);
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    background-color: rgb(128,128,128);    
+}
+
+.inputWrapper {
+    position: fixed;
+    top:0;
+    margin: 0 auto;
+    outline: 1px solid red;
+    background-color: rgb(0,50,100);
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 10px;
+}
+.inputDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    
+}
+
+.containerWrapper {
+    position:absolute;
+    top:0;
+    left:0;
+    width: 100vw;
+    height: 100vh;
+    background-color: bisque;
+}
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.board1, .board2 {
+    display: grid; 
+    grid-template-columns: repeat(10, var(--cellSize));
+    grid-template-rows: repeat(10, var(--cellSize));
+    background-color: azure;
+    border: 1px solid black;
+}
+.boardCell {
+    border: 1px dotted gray;
+    position: relative;
+}
+.shipsToPlaceWrapper {
+    position:absolute;
+    top:0;
+    left:0;
+}
+.placeShip {
+    background-color: aquamarine;
+    border: 1px solid black;
+    transform-origin: top left;
+}
+.placeShip:hover {
+    outline: 2px solid cyan;
+}
+.hide {
+    opacity: 0;
+}
+.dragoverRefused{
+    outline: 1px solid red;
+}
+.dragoverAccepted{
+    outline: 2px solid green;
+}
+.shipImg {
+    width:100%;
+    height: 100%;
+}
+.ship1{
+    width:var(--cellSize);
+    height:var(--cellSize);
+}
+.ship2 {
+    width: calc(var(--cellSize) * 2);
+    height:var(--cellSize);
+}
+.ship3 {
+    width: calc(var(--cellSize) * 3);
+    height:var(--cellSize);
+}
+.ship4{
+    width: calc(var(--cellSize) * 4);
+    height:var(--cellSize);
+}
+.shipAbs {
+    position:absolute;
+    top:0;
+    left:0;
+    z-index: 1;
+}
+.rotate {
+    transform: rotate(90deg) translateY(calc(var(--cellSize) * -1));
+}
