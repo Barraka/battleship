@@ -41,8 +41,6 @@ function gameStart() {
     inputWrapper.remove();
     //Initialize boards
     const currentGame = Game(name1, name2);
-    // player1Board = Gameboard();
-    // player2Board = Gameboard(true);
     player1Board = currentGame.p1board;
     player2Board = currentGame.p2board;
     //Display boards
@@ -78,9 +76,12 @@ function gameStart() {
 
     function initShips() {
         const shipsToPlaceWrapper = document.createElement('div');
+        const shipsToPlaceWrapperAI = document.createElement('div');
         shipsToPlaceWrapper.classList.add('shipsToPlaceWrapper');
+        shipsToPlaceWrapperAI.classList.add('shipsToPlaceWrapperAI');
         let toPlace=(currentGame.p1shipsToPlace.length);
         for(i=0;i<toPlace;i++) {
+            //Player1 ships
             const placeShip = document.createElement('div');
             placeShip.classList.add('placeShip', `ship${currentGame.p1shipsToPlace[i]}`, 'placeShipHover');
             placeShip.setAttribute('draggable','true');
@@ -93,8 +94,20 @@ function gameStart() {
             shipsToPlaceWrapper.appendChild(placeShip);
             placeShip.addEventListener('dragstart', dragStart);
             placeShip.addEventListener('click', rotate);
+            //AI ships
+            const placeShipAI = document.createElement('div');
+            placeShipAI.classList.add('placeShip', 'shipAIHidden', `ship${currentGame.p1shipsToPlace[i]}`);
+            placeShipAI.id=`id${i+1}`;
+            placeShipAI.setAttribute('data-sizeAI',`${currentGame.p1shipsToPlace[i]}`);
+            const shipImgAI = document.createElement('img');
+            shipImgAI.classList.add(`shipImg`);
+            shipImgAI.src=`./assets/Ship${currentGame.p1shipsToPlace[i]}.png`;
+            placeShipAI.appendChild(shipImgAI);
+            shipsToPlaceWrapperAI.appendChild(placeShipAI);
+
         }
         document.body.appendChild(shipsToPlaceWrapper);
+        document.body.appendChild(shipsToPlaceWrapperAI);
     }
 
     //Drag option
@@ -151,12 +164,7 @@ function gameStart() {
         const attempt=currentGame.p1placeShip(curSize,attemptX-1,attemptY-1,orientation);
         if(!attempt) {
             elementDragged.classList.remove('shipAbs');
-            console.log('placement not allowed');
             return;
-        }
-        else {
-            console.log('placement accepted, new array: ');
-            console.log(currentGame.p1board);
         }
         e.target.appendChild(elementDragged);
         elementDragged.removeEventListener('dragstart', dragStart);
@@ -186,10 +194,10 @@ function gameStart() {
             const boardAI=currentGame.p2board;
             for(let x=0;x<10;x++) {
                 for(let y=0;y<10;y++) {
-                    const cell=boardAI[x][y];
+                    const cell=boardAI[y][x];
                     if(cell!=='') {
                         const cellToPaint = document.querySelector(`[data-aiX="${x+1}"][data-aiY="${y+1}"]`);
-                        cellToPaint.style.backgroundColor='red';
+                        cellToPaint.classList.add('hint');
                     }
                 }
             }
@@ -198,25 +206,49 @@ function gameStart() {
                 x.addEventListener('click',shootEnemy);
             });
         }
+        function addSprite(target, s) {
+            const sprite = document.createElement('div');
+            sprite.classList.add('sprite');
+            const spriteImg = document.createElement('img');
+            spriteImg.classList.add('spriteImg');
+            if(s==='hit' || s==='sunk')spriteImg.src='./assets/boom.png';
+            if(s==='missed')spriteImg.src='./assets/splash.png';
+            sprite.appendChild(spriteImg);
+            target.appendChild(sprite);
+        }
         function shootEnemy(e) {
             const target = e.currentTarget;
-            console.log(target);
             let aiX=parseInt(target.getAttribute('data-aiY'));
             let aiY=parseInt(target.getAttribute('data-aiX'));
             aiX--;
             aiY--;
-            const shot=currentGame.p1attack(aiX, aiY);
-            console.log(shot);
+            const shot=currentGame.p1attack(aiY, aiX);
+            if(!shot)return;
             if(shot==='missed') {
-                target.style.backgroundImage="url('./assets/splash.png')";
+                // target.style.backgroundImage="url('./assets/splash.png')";
+                addSprite(target, 'missed');
+                target.classList.add('missed');
             }
             if(shot==='hit') {
-                target.style.backgroundImage="url('./assets/boom.png')";
+                // target.style.backgroundImage="url('./assets/boom.png')";
+                addSprite(target, 'hit');
+                target.classList.add('hit');
+            }
+            if(shot.state==='sunk') {
+                // target.style.backgroundImage="url('./assets/boom.png')";
+                addSprite(target, 'hit');
+                const len=shot.shipSunk.length;
+                const aiShipToPlace = document.querySelector(`[data-sizeAI="${len}"]`);
+                const posX=shot.shipSunk.posX;
+                const posY=shot.shipSunk.posY;
+                const newCell=document.querySelector(`[data-aiX="${posX+1}"][data-aiY="${posY+1}"]`);
+                newCell.appendChild(aiShipToPlace);
+                aiShipToPlace.classList.remove('shipAIHidden');
+                if(shot.shipSunk.orientation==='v')aiShipToPlace.classList.add('rotate');
             }
             const enemyAttack=currentGame.attackAI();
-            console.log(enemyAttack.attempt);
-            const x=enemyAttack.rand1;
-            const y=enemyAttack.rand2;
+            const x=enemyAttack.posX;
+            const y=enemyAttack.posY;
             const enemyTarget=document.querySelector(`[data-posX="${x+1}"][data-posY="${y+1}"]`);
             if(enemyAttack.attempt==='missed') {                
                 enemyTarget.style.backgroundImage="url('./assets/splash.png')";

@@ -64,11 +64,18 @@ body {
     top:0;
     left:0;
 }
+.shipsToPlaceWrapperAI {
+    position:fixed;
+    visibility: hidden;
+}
 .placeShip {
     background-color: aquamarine;
     border: 1px solid black;
     transform-origin: top left;
     
+}
+.shipAIHidden {
+    visibility: hidden;
 }
 .placeShipHover {
     cursor: pointer;
@@ -128,4 +135,17 @@ body {
 .explosionImg {
     width: var(--cellSize);
     height: var(--cellSize);
+}
+.sprite {
+    position:absolute;
+    top:0;
+    left:0;
+    z-index: 2;
+}
+.spriteImg {
+    width: 100%;
+    height: 100%;
+}
+.hint:hover {
+    outline: 1px solid black;
 }

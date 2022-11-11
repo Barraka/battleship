@@ -1,16 +1,16 @@
-const Ship = function(len) {
+const Ship = function(len, orientation='h', posX, posY) {
     const length = len;
     let hits = 0;
     let sunk = false;
+    this.posX=posX;
+    this.posY=posY;
     function hit() {
         this.hits++;
         if(this.hits>=length)this.sunk=true;
     };
-    function isSunk() {
-        return (this.hits >= length ? true : false);
-    }
+    function isSunk() {return(this.hits >= length ? true : false);}
     //----
-    return {length, hits, sunk, hit, isSunk};
+    return {length, hits, sunk, hit, isSunk, orientation, posX, posY};
 }
 
 const Gameboard = function(ai=false) {
@@ -28,7 +28,6 @@ const Gameboard = function(ai=false) {
     };
     const shipsToPlace = [1,1,1,2,2,3,3,4];
     function printBoard() {
-        console.log(board);
     };
     function attemptPlacement(len, x, y, orientation='h') {
         if(isNaN(x) || isNaN(y))return false;
@@ -36,7 +35,7 @@ const Gameboard = function(ai=false) {
         if(orientation==='h' || orientation==='H') {
             for(let i=0;i<len;i++) {
                 if(x+i>9){console.log('too big');return false;} 
-                if(board[y][x+i]!==''){console.log(board[y][x+i]);return false;}
+                if(board[y][x+i]!==''){return false;}
                               
             };
             return true;
@@ -55,35 +54,31 @@ const Gameboard = function(ai=false) {
     function placeShip(len, x, y, orientation='h') {
         if(isNaN(x) || isNaN(y))return false;
         //Place horizontally
-        if(orientation==='h' || orientation==='H') {
+        if(orientation==='h') {
             for(let i=0;i<len;i++) {
-                if(board[y][x+i]!==''){console.log(board[y][x+i]);return false;}
+                if(board[y][x+i]!==''){return false;}
                 if(x+i>9){console.log('too big');return false;}               
             };
             //Conditions are met, create ship
-            const newShip = Ship(len);
+            const newShip = Ship(len, orientation, x, y);
             for(let i=0;i<len;i++) {
                 board[y][x+i] = newShip;
             };
             this.numberOfShips++;
-            // this.shipsToPlace--;
-            // this.shipsToPlace.splice(n,1);
             return true;
         }
         //Place vertically
-        else if(orientation==='v' || orientation==='V') {
+        else if(orientation==='v') {
             for(let i=0;i<len;i++) {
                 if(y-i<0)return false;
                 if(board[y-i][x]!=='')return false;              
             }
             //Conditions are met, create ship
-            const newShip = Ship(len);
+            const newShip = Ship(len,orientation, x, y);
             for(let i=0;i<len;i++) {
                 board[y-i][x]= newShip;
             };
             this.numberOfShips++;
-            // this.shipsToPlace--;
-            // this.shipsToPlace.splice(n,1);
             return true;
         }
         
@@ -102,11 +97,9 @@ const Gameboard = function(ai=false) {
                 }
             }
         }
-        console.log(board);
     }
     function attack(x,y) {
         if(this.numberOfShips<shipsToPlace.length)return false; //Only allow attacks when all ships have been placed
-        console.log(x + '   ' + y);
         if(x<0 || x>9 || y<0 || y>9)return false;
         if(boardAttacks[y][x]==='h')return false;
         if(boardAttacks[y][x]==='m')return false;
@@ -116,12 +109,13 @@ const Gameboard = function(ai=false) {
         }
         //The attack has hit
         if(typeof(board[y][x]==='object')) {
+            const shipSunk=board[y][x];
             board[y][x].hit();
             boardAttacks[y][x]='h';
             if(board[y][x].sunk) {
                 this.numberOfSunks++;
                 if(this.numberOfSunks>=this.numberOfShips)return 'Game over';
-                return 'sunk';
+                return {state:'sunk', shipSunk};
             }
             return 'hit';
         }
@@ -146,6 +140,13 @@ const Game = function(name1, name2) {
     const p2shipsToPlace=player2Board.shipsToPlace;
     const p1attemptPlacement = player1Board.attemptPlacement;
     const p2attemptPlacement = player2Board.attemptPlacement;
+    //Create array of possible attempts for AI to choose from
+    let possibleAttacks=[];
+    for(let i=0;i<10;i++) {        
+        for(let j=0;j<10;j++) {
+            possibleAttacks.push([i,j]);
+        }
+    }
     const p1placeShip = function(...args){
         const attempt=player1Board.placeShip(...args);
         if(attempt && player1Board.numberOfShips>=player1Board.shipsToPlace.length) {
@@ -166,12 +167,13 @@ const Game = function(name1, name2) {
         return attempt;
     };
     function attackAI() {
-        while(true) {
-            const rand1=Math.floor(Math.random()*10);
-            const rand2=Math.floor(Math.random()*10);
-            const attempt=player1Board.attack(rand1, rand2);
-            if(attempt)return {attempt, rand1, rand2};
-        }
+        const attackLength=possibleAttacks.length;
+        const randAttack=Math.floor(Math.random()*attackLength);
+        const attackCoords=possibleAttacks.splice(randAttack,1)[0];
+        const posX=attackCoords[0];
+        const posY=attackCoords[1];
+        const attempt=player1Board.attack(posX,posY);
+        return {attempt, posX, posY};
     }
 
     //----
