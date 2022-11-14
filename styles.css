@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Corben&family=Dosis:wght@600&family=Open+Sans:wght@500&family=Poppins&family=Roboto&display=swap');
 :root {
     --cellSize: calc(min(100vh, 100vw) / 10*0.7);
 }
@@ -5,20 +6,25 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Dosis', sans-serif;
+    font-size: 18px;
+    user-select: none;
 }
 body {
     background-color: rgb(128,128,128);    
 }
 
+/* ---- inputs ---- */
 .inputWrapper {
     position: fixed;
-    top:0;
+    top:50px;
     margin: 0 auto;
-    outline: 1px solid red;
+    padding: 15px;
     background-color: rgb(0,50,100);
     left: 50%;
     transform: translateX(-50%);
     border-radius: 10px;
+    text-align: center;
 }
 .inputDiv {
     display: flex;
@@ -27,9 +33,17 @@ body {
     flex-direction: column;
     gap: 10px;
     padding: 10px;
-    
+    text-align: center;
+}
+.name1Input {
+    text-align: center;
+}
+.battleButton {
+    padding: 5px 15px;
+    margin-top: 15px;
 }
 
+/* ---- Board ---- */
 .containerWrapper {
     position:absolute;
     top:0;
@@ -43,6 +57,50 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+.applyAnimation {
+    --timer: 4s;
+    animation: fadeIn var(--timer) ease;
+    -webkit-animation: fadeIn ease var(--timer);
+    -moz-animation: fadeIn ease var(--timer);
+    -o-animation: fadeIn ease var(--timer);
+    -ms-animation: fadeIn ease var(--timer);
+}
+ @keyframes fadeIn {
+    0% {opacity: 0;}
+    30% {opacity:1;}
+    90% {opacity: 0;}
+    100% {opacity: 0;}
+  }
+  
+   @-moz-keyframes fadeIn {
+    0% {opacity: 0;}
+    30% {opacity:1;}
+    90% {opacity: 0;}
+    100% {opacity: 0;}
+  }
+  
+  @-webkit-keyframes fadeIn {
+    0% {opacity: 0;}
+    30% {opacity:1;}
+    90% {opacity: 0;}
+    100% {opacity: 0;}
+  }
+  
+  @-o-keyframes fadeIn {
+    0% {opacity: 0;}
+    30% {opacity:1;}
+    90% {opacity: 0;}
+    100% {opacity: 0;}
+  }
+  
+  @-ms-keyframes fadeIn {
+    0% {opacity: 0;}
+    30% {opacity:1;}
+    90% {opacity: 0;}
+    100% {opacity: 0;}
+}
+
 .board1, .board2 {
     display: grid; 
     grid-template-columns: repeat(10, var(--cellSize));
@@ -72,6 +130,9 @@ body {
     background-color: aquamarine;
     border: 1px solid black;
     transform-origin: top left;
+    margin:1px;
+    border-radius: 5px;
+    overflow: hidden;
     
 }
 .shipAIHidden {
@@ -89,8 +150,18 @@ body {
 .dragoverRefused{
     outline: 1px solid red;
 }
+.dragoverRefused::after{
+    content: "X";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 30px;
+    color:red;
+}
 .dragoverAccepted{
     outline: 2px solid green;
+    background-color: green;
 }
 .shipImg {
     width:100%;
@@ -122,11 +193,16 @@ body {
     transform: rotate(90deg) translateY(calc(var(--cellSize) * -1));
 }
 .shipLocked {
-    outline: 2px solid rgb(0,50,100);
+    border: 3px solid rgb(0,50,100);
+    border-radius: 5px;
 }
 .targetCursor {
     cursor: url(assets/crosshair.svg), auto;
 }
+ .boardCell:hover:not(.hit):not(.missed){
+    background-color: rgb(38, 160, 48);
+}
+
 .explosionDiv {
     position: absolute;
     top:0;
@@ -141,6 +217,14 @@ body {
     top:0;
     left:0;
     z-index: 2;
+    animation: boom 0.4s linear;
+
+}
+@keyframes boom {
+    0% { transform: scale(0);}
+    70% {transform: scale(1.4);}
+    100% {transform: scale(1);}
+
 }
 .spriteImg {
     width: 100%;
@@ -148,4 +232,96 @@ body {
 }
 .hint:hover {
     outline: 1px solid black;
+}
+.shipsunk {
+    --timer: 0.4s;
+    -webkit-animation-name: hvr-pulse-grow;
+    animation-name: hvr-pulse-grow;
+    -webkit-animation-duration: var(--timer);
+    animation-duration: var(--timer);
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    -webkit-animation-iteration-count: 4;
+    animation-iteration-count: 4;
+    -webkit-animation-direction: alternate;
+    animation-direction: alternate;
+    overflow: visible;;
+}
+@-webkit-keyframes hvr-pulse-grow {
+    to {
+      -webkit-transform: scale(1.2);
+      transform: scale(1.2);
+    }}
+@keyframes hvr-pulse-grow {
+to {
+    -webkit-transform: scale(1.5);
+    transform: scale(1.5);
+}}
+
+/* ---- Place ships ---- */
+.placeShips  {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+}
+.checkbox {
+    margin: 5px;
+}
+/* ---- ready to attack ---- */
+.wrapper {
+    position: fixed;
+    top:50px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 30px;
+    background-color: rgb(61, 78, 105);
+    border-radius: 5px;
+    color:white;
+    text-align: center;
+}
+.readyDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    
+}
+.explanation {
+    font-size: 25px;
+}
+.okbutton {
+    cursor: pointer;
+    border: 2px solid white;
+    padding: 5px 15px;
+    border-radius: 5px;
+    margin: 15px;
+    /* width: fit-content; */
+}
+.okbutton:hover {
+    background-color: white;
+    color:rgb(61, 78, 105);
+}
+
+/* ---- Additional info ---- */
+.additionalInfo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 10px;
+    text-align: center;
+    background-color: rgb(168, 168, 168);
+    width: 25%;
+    min-height: 100px;
+    margin: 0 auto;
+    border-radius: 100vw;
+    box-shadow: inset 0px 0px 10px 5px rgb(48, 51, 54);
+}
+.stateText {
+    text-align: center;
+    margin: 15px;
+    min-height: 2ch;
 }

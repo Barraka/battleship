@@ -173,6 +173,10 @@ const Game = function(name1, name2) {
         const posX=attackCoords[0];
         const posY=attackCoords[1];
         const attempt=player1Board.attack(posX,posY);
+        if(attempt==='Game over'){
+            this.gameOver=true;
+            return {attempt, posX, posY};
+        }
         return {attempt, posX, posY};
     }
 
