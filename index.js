@@ -27,6 +27,7 @@ const Gameboard = function(ai=false) {
         }
     };
     const shipsToPlace = [1,1,1,2,2,3,3,4];
+    // const shipsToPlace = [1];
     function printBoard() {
     };
     function attemptPlacement(len, x, y, orientation='h') {
@@ -88,8 +89,8 @@ const Gameboard = function(ai=false) {
         const lengthShips=shipsToPlace.length;
         for(let i=0;i<lengthShips;i++) {
             while(true) {
-                const rand1=Math.floor(Math.random()*lengthShips);
-                const rand2=Math.floor(Math.random()*lengthShips);
+                const rand1=Math.floor(Math.random()*10);
+                const rand2=Math.floor(Math.random()*10);
                 const orientation=(Math.random()<0.5) ? 'h' : 'v';
                 if(placeShip(shipsToPlace[i],rand1,rand2,orientation)) {
                     this.numberOfShips++;
@@ -114,7 +115,7 @@ const Gameboard = function(ai=false) {
             boardAttacks[y][x]='h';
             if(board[y][x].sunk) {
                 this.numberOfSunks++;
-                if(this.numberOfSunks>=this.numberOfShips)return 'Game over';
+                if(this.numberOfSunks>=this.numberOfShips)return {state:'Game over', shipSunk};
                 return {state:'sunk', shipSunk};
             }
             return 'hit';
@@ -183,10 +184,3 @@ const Game = function(name1, name2) {
     //----
     return {player1, player2, p1board, p2board, p1shipsToPlace, p2shipsToPlace, p1attemptPlacement, p2attemptPlacement, p1placeShip, p1attack, readyToAttack, p1ready, p2ready, attackAI, gameOver};
 }
-
-//const myBoard = Gameboard();
-// myBoard.printBoard();
-// myBoard.shipsToPlace(3,3,3,"h");
-// myBoard.printBoard();
-
-// module.exports = {myBoard, Gameboard, Ship};

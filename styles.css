@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Corben&family=Dosis:wght@600&family=Open+Sans:wght@500&family=Poppins&family=Roboto&display=swap');
 :root {
-    --cellSize: calc(min(100vh, 100vw) / 10*0.7);
+    --cellSize: min(calc(min(100vh, 100vw) / 10*0.9),60px);
 }
 * {
     margin: 0;
@@ -12,6 +12,7 @@
 }
 body {
     background-color: rgb(128,128,128);    
+    overflow-x: hidden;
 }
 
 /* ---- inputs ---- */
@@ -46,16 +47,22 @@ body {
 /* ---- Board ---- */
 .containerWrapper {
     position:absolute;
-    top:0;
+    top:100px;
     left:0;
     width: 100vw;
-    height: 100vh;
+    /* height: 100vh; */
     background-color: bisque;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 .container {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .applyAnimation {
@@ -100,32 +107,64 @@ body {
     90% {opacity: 0;}
     100% {opacity: 0;}
 }
-
+.board1Wrapper, .board2Wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.board1Name, .board2Name {
+    background-color: aliceblue;
+    padding: 10px 20px 4px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
 .board1, .board2 {
     display: grid; 
     grid-template-columns: repeat(10, var(--cellSize));
     grid-template-rows: repeat(10, var(--cellSize));
-    background-color: azure;
+    /* background-color: rgb(127, 157, 192); */
+    /* background: radial-gradient(rgb(108, 130, 172), rgb(67, 106, 179)); */
     border: 1px solid black;
+    position: relative;
 }
 .boardCell {
-    outline: 1px dotted gray;
+    outline: 1px solid rgb(54, 54, 54);
     
     font-size: small;
     background-size: 100%;
+    background: radial-gradient(rgb(108, 130, 172), rgb(67, 106, 179));
 }
 .boardCellRelative {
     position: relative;
 }
 .shipsToPlaceWrapper {
     position:absolute;
-    top:0;
+    top:30px;
     left:0;
+    transition: all 0.5s ease-in-out;
+    backdrop-filter: blur(2px);
+    border: 1px solid rgb(0,50,100);
+    padding: 5px 0;
+    border-radius: 5px;
 }
 .shipsToPlaceWrapperAI {
     position:fixed;
     visibility: hidden;
 }
+.shipyardWrapper {
+    position: relative;
+}
+.shipyardhidden {
+    transform-origin: top right;
+    transform: translateX(-50vw);
+    
+}
+.handleMenu {
+    padding: 5px 15px;
+    border-radius: 5px;
+}
+
 .placeShip {
     background-color: aquamarine;
     border: 1px solid black;
@@ -141,14 +180,16 @@ body {
 .placeShipHover {
     cursor: pointer;
 }
-.placeShipHover:hover {
-    outline: 2px solid cyan;
+
+.shipSelected {
+    outline: 3px solid rgb(0,50,100);
 }
 .hide {
     opacity: 0;
 }
 .dragoverRefused{
     outline: 1px solid red;
+    background-color: rgb(255, 123, 123);
 }
 .dragoverRefused::after{
     content: "X";
@@ -199,9 +240,7 @@ body {
 .targetCursor {
     cursor: url(assets/crosshair.svg), auto;
 }
- .boardCell:hover:not(.hit):not(.missed){
-    background-color: rgb(38, 160, 48);
-}
+
 
 .explosionDiv {
     position: absolute;
@@ -229,6 +268,9 @@ body {
 .spriteImg {
     width: 100%;
     height: 100%;
+}
+.hint {
+    outline:2px solid green;
 }
 .hint:hover {
     outline: 1px solid black;
@@ -278,8 +320,10 @@ to {
     padding: 30px;
     background-color: rgb(61, 78, 105);
     border-radius: 5px;
+    min-width: 250px;
     color:white;
     text-align: center;
+    z-index:4;
 }
 .readyDiv {
     display: flex;
@@ -300,28 +344,60 @@ to {
     margin: 15px;
     /* width: fit-content; */
 }
-.okbutton:hover {
-    background-color: white;
-    color:rgb(61, 78, 105);
-}
+
 
 /* ---- Additional info ---- */
 .additionalInfo {
+    position:fixed;
+    top:0;
+    left:50%;
+    transform: translateX(-50%);
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     padding: 10px;
     text-align: center;
     background-color: rgb(168, 168, 168);
     width: 25%;
+    min-width: 300px;
     min-height: 100px;
     margin: 0 auto;
-    border-radius: 100vw;
+    border-radius: 10px;
     box-shadow: inset 0px 0px 10px 5px rgb(48, 51, 54);
 }
 .stateText {
     text-align: center;
     margin: 15px;
     min-height: 2ch;
+}
+/* ---- Game over ---- */
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: blur(4px);
+    z-index: 3;
+}
+.attribution {
+    margin: 15px 0 30px;
+}
+
+/* ---- Mobile version ---- */
+@media (max-width: 500px) {
+
+}
+@media (hover: hover) {
+    .placeShipHover:hover {
+        border: 2px solid cyan;
+    }
+    .okbutton:hover {
+        background-color: white;
+        color:rgb(61, 78, 105);
+    }
+    .board2 .boardCell:hover:not(.hit):not(.missed){
+        background-color: rgb(38, 160, 48);
+    }
 }
