@@ -382,7 +382,7 @@ to {
 }
 /* ---- ready to attack ---- */
 .wrapper {
-    position: fixed;
+    position: absolute;
     top:50px;
     left: 50%;
     transform: translateX(-50%);
@@ -410,6 +410,7 @@ to {
     align-items: flex-start;
     flex-direction: column;
     gap: 15px;
+    width: min(100vw, 400px);
 }
 .explWrapper {
     display: flex;
@@ -473,7 +474,7 @@ to {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 150vh;
     backdrop-filter: blur(4px);
     z-index: 3;
 }
