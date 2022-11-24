@@ -240,7 +240,7 @@ body {
 }
 
 .shipSelected {
-    outline: 3px solid rgb(0,50,100);
+    outline: 3px solid lime;
 }
 .hide {
     opacity: 0;
@@ -478,7 +478,7 @@ to {
 }
 @media (hover: hover) {
     .placeShipHover:hover {
-        border: 2px solid cyan;
+        border: 2px solid lime;
     }
     .okbutton:hover {
         background-color: white;

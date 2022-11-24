@@ -222,8 +222,8 @@ const battleship=(function app() {
             elementDragged=undefined;
             return;
         }
-        const shipsToPlaceWrapper = document.querySelector('.shipsToPlaceWrapper');
-        shipsToPlaceWrapper.childNodes.forEach(e=> {
+        const shipsToPlaceInner = document.querySelector('.shipsToPlaceInner');
+        shipsToPlaceInner.childNodes.forEach(e=> {
             e.classList.remove('shipSelected');
         });
         e.currentTarget.classList.add('shipSelected');
