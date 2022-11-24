@@ -160,11 +160,13 @@ const battleship=(function app() {
         shipyardWrapper.appendChild(handleMenu);
 
         function togglemenu() {
-            const shipsToPlaceInner = document.querySelector('.shipsToPlaceInner');
-            if(shipsToPlaceInner.classList.contains('shipyardhidden')) {
-                shipsToPlaceInner.classList.remove('shipyardhidden');
+            const shipsToPlaceWrapper = document.querySelector('.shipsToPlaceWrapper');
+            if(shipsToPlaceWrapper.classList.contains('shipyardhidden')) {
+                shipsToPlaceWrapper.classList.remove('shipyardhidden');
             }
-            else shipsToPlaceInner.classList.add('shipyardhidden');
+            else {
+                shipsToPlaceWrapper.classList.add('shipyardhidden');
+            }
         }
 
         //Ships to place
