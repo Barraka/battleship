@@ -11,10 +11,23 @@ const battleship=(function app() {
     let name1;
     let name2;
     name1 ? name1 : name1='Player 1';
-    name2='Xan';
+    name2='Cpt Ramius';
     let playerTurn=1;
+    let cheatmode=false;
     
     function introStart() {
+        //Title
+        const titleWrapper = document.createElement('div');
+        titleWrapper.classList.add('titleWrapper');
+        const titleText = document.createElement('div');
+        titleText.classList.add('titleText');
+        titleText.textContent='Battleship Mania';
+        const titleImg = document.createElement('img');
+        titleImg.classList.add('titleImg');
+        titleImg.src='./assets/pic.jpg';
+        titleWrapper.appendChild(titleImg);
+        titleWrapper.appendChild(titleText);
+        //Inuput container
         let inputWrapper = document.createElement('div');
         inputWrapper.classList.add('inputWrapper');
         const inputDiv = document.createElement('div');
@@ -22,39 +35,54 @@ const battleship=(function app() {
         //First player
         const name1Label = document.createElement('label');
         name1Label.classList.add('name1Label');
-        name1Label.textContent = "Enter player1 name:";
+        name1Label.textContent = "Enter player name:";
         const name1Input = document.createElement('input');
         name1Input.classList.add('name1Input');
         name1Input.placeholder='Player 1';
         
-        //Second player
-        const name2Label = document.createElement('label');
-        name2Label.classList.add('name2Label');
-        name2Label.textContent = "Enter player2 name:";
-        const name2Input = document.createElement('input');
-        name2Input.classList.add('name2Input');
         //Launch button
         const battleButton = document.createElement('button');
         battleButton.classList.add('battleButton');
         battleButton.textContent = "Battle!";
         battleButton.addEventListener('click', launch);
+        //Cheat mode
+        const cheatWrapper = document.createElement('div');
+        cheatWrapper.classList.add('cheatWrapper');
+        const checkbox = document.createElement('input');
+        checkbox.classList.add('checkbox');
+        checkbox.type='checkbox';
+        checkbox.id='checkbox';
+        const label = document.createElement('label');
+        label.classList.add('label', 'cheatlabel');
+        label.setAttribute('for','checkbox');
+        label.textContent="Enable cheat mode";
+        cheatWrapper.appendChild(checkbox);
+        cheatWrapper.appendChild(label);
         //Mount
+        document.body.appendChild(titleWrapper);
         inputWrapper.appendChild(inputDiv);
         inputDiv.appendChild(name1Label);
         inputDiv.appendChild(name1Input);
-        inputDiv.appendChild(name2Label);
-        inputDiv.appendChild(name2Input);
+        // inputDiv.appendChild(name2Label);
+        // inputDiv.appendChild(name2Input);
         inputDiv.appendChild(battleButton);
+        inputDiv.appendChild(cheatWrapper);
     
         document.body.appendChild(inputWrapper);
     }
     function makeBoards() {
+        playerTurn=1;
+        //Check if cheat mode is enabled
+        const checkbox = document.querySelector('.checkbox');
+        if(checkbox.checked)cheatmode=true;
+        else cheatmode=false;
         this.name1=document.querySelector('.name1Input').value;
-        this.name2=document.querySelector('.name2Input').value;
+        if(this.name1==='')this.name1='Player 1';
+        // this.name2=document.querySelector('.name2Input').value;
         const inputWrapper = document.querySelector('.inputWrapper');
         inputWrapper.remove();
         //Initialize boards
-        currentGame = Game(name1, name2);
+        currentGame = Game(this.name1, this.name2);
         player1Board = currentGame.p1board;
         player2Board = currentGame.p2board;
         //Display names
@@ -66,7 +94,7 @@ const battleship=(function app() {
         board2Wrapper.classList.add('board2Wrapper');
         const board2Name = document.createElement('div');
         board2Name.classList.add('board2Name');
-        board1Name.textContent=name1;
+        board1Name.textContent=this.name1;
         board2Name.textContent=name2;
         board1Wrapper.appendChild(board1Name);
         board2Wrapper.appendChild(board2Name);
@@ -126,6 +154,7 @@ const battleship=(function app() {
 
     function initShips(obj) {
         currentGame=obj
+        updateState(`Waiting for ${name1} to place all his ships.`, true);
         //Buttons to add ships
         const shipyardWrapper = document.createElement('div');
         shipyardWrapper.classList.add('shipyardWrapper');
@@ -133,7 +162,7 @@ const battleship=(function app() {
         containerWrapper.prepend(shipyardWrapper);
         const handleMenu = document.createElement('button');
         handleMenu.classList.add('handleMenu');
-        handleMenu.textContent='Shipyard';
+        handleMenu.textContent='Toggle Shipyard';
         handleMenu.addEventListener('click', togglemenu);
         shipyardWrapper.appendChild(handleMenu);
 
@@ -316,13 +345,13 @@ const battleship=(function app() {
         shipyardWrapper.remove();
         const board2 = document.querySelector('.board2');
         const boardAI=currentGame.p2board;
-        const currentTurn = document.querySelector('.currentTurn');
+        // const currentTurn = document.querySelector('.currentTurn');
         for(let x=0;x<10;x++) {
             for(let y=0;y<10;y++) {
                 const cell=boardAI[y][x];
                 if(cell!=='') {
                     const cellToPaint = document.querySelector(`[data-aiX="${x+1}"][data-aiY="${y+1}"]`);
-                    cellToPaint.classList.add('hint');
+                    if(cheatmode)cellToPaint.classList.add('hint');
                 }
             }
         }
@@ -358,7 +387,7 @@ const battleship=(function app() {
                 target.classList.add('missed');
                 setTimeout(()=> {
                     currentTurn.textContent=`Turn: ${name2}`;
-                },200);
+                },500);
                 setTimeout(()=> {
                     aiAttack();
                 },1000);
@@ -369,7 +398,7 @@ const battleship=(function app() {
                 updateState('You have hit an enemy ship!');
                 setTimeout(()=> {
                     currentTurn.textContent=`Turn: ${name2}`;
-                },200);
+                },500);
                 setTimeout(()=> {
                     aiAttack();
                 },2000);
@@ -389,7 +418,7 @@ const battleship=(function app() {
                 aiShipToPlace.firstElementChild.classList.add('shipsunk');
                 setTimeout(()=> {
                     currentTurn.textContent=`Turn: ${name2}`;
-                },200);
+                },500);
                 setTimeout(()=> {
                     aiShipToPlace.firstElementChild.classList.remove('shipsunk'); 
                 },1500);
@@ -444,7 +473,9 @@ const battleship=(function app() {
                 }
                 playerTurn=1;
                 const currentTurn = document.querySelector('.currentTurn');
-                currentTurn.textContent=`Turn: ${name1}`;
+                setTimeout(()=> {
+                    currentTurn.textContent=`Turn: ${name1}`;
+                },500);
             };
             
         }
@@ -479,8 +510,12 @@ const battleship=(function app() {
         document.body.appendChild(backdrop);
         document.body.appendChild(wrapper);
     }
-    function updateState(t) {
+    function updateState(t, static=false) {
         const stateText = document.querySelector('.stateText');
+        if(static) {
+            stateText.textContent=t; 
+            return;
+        }
         // stateText.textContent='';
         setTimeout(()=> {
             stateText.classList.remove('applyAnimation');
@@ -503,8 +538,52 @@ const battleship=(function app() {
         placeDiv.classList.add('placeDiv');
         const explanation = document.createElement('div');
         explanation.classList.add('explanation');
-        explanation.innerHTML='Place your ships by dragging & dropping them on your board.<br><br>';
-        explanation.innerHTML+='You can click a ship to rotate it.';
+        //----First element
+        let checkmark = document.createElement('div');
+        checkmark.classList.add('checkmark');
+        checkmark.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="m10.6 16.6 7.05-7.05-1.4-1.4-5.65 5.65-2.85-2.85-1.4 1.4ZM12 22q-2.075 0-3.9-.788-1.825-.787-3.175-2.137-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175 1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138 1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175-1.35 1.35-3.175 2.137Q14.075 22 12 22Zm0-2q3.35 0 5.675-2.325Q20 15.35 20 12q0-3.35-2.325-5.675Q15.35 4 12 4 8.65 4 6.325 6.325 4 8.65 4 12q0 3.35 2.325 5.675Q8.65 20 12 20Zm0-8Z"/></svg>';
+        let explText = document.createElement('div');
+        explText.classList.add('explText');
+        explText.textContent='Place your ships by dragging & dropping them on your board.';
+        let explWrapper = document.createElement('div');
+        explWrapper.classList.add('explWrapper');
+        explWrapper.appendChild(checkmark);
+        explWrapper.appendChild(explText);
+        explanation.appendChild(explWrapper);
+
+        //----Second element
+        checkmark = document.createElement('div');
+        checkmark.classList.add('checkmark');
+        checkmark.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="m10.6 16.6 7.05-7.05-1.4-1.4-5.65 5.65-2.85-2.85-1.4 1.4ZM12 22q-2.075 0-3.9-.788-1.825-.787-3.175-2.137-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175 1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138 1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175-1.35 1.35-3.175 2.137Q14.075 22 12 22Zm0-2q3.35 0 5.675-2.325Q20 15.35 20 12q0-3.35-2.325-5.675Q15.35 4 12 4 8.65 4 6.325 6.325 4 8.65 4 12q0 3.35 2.325 5.675Q8.65 20 12 20Zm0-8Z"/></svg>';
+        explText = document.createElement('div');
+        explText.classList.add('explText');
+        explText.textContent='You can click a ship to rotate it.';
+        explWrapper = document.createElement('div');
+        explWrapper.classList.add('explWrapper');
+        explWrapper.appendChild(checkmark);
+        explWrapper.appendChild(explText);
+        explanation.appendChild(explWrapper);
+
+        //----Third element
+        checkmark = document.createElement('div');
+        checkmark.classList.add('checkmark');
+        checkmark.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="m10.6 16.6 7.05-7.05-1.4-1.4-5.65 5.65-2.85-2.85-1.4 1.4ZM12 22q-2.075 0-3.9-.788-1.825-.787-3.175-2.137-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175 1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138 1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175-1.35 1.35-3.175 2.137Q14.075 22 12 22Zm0-2q3.35 0 5.675-2.325Q20 15.35 20 12q0-3.35-2.325-5.675Q15.35 4 12 4 8.65 4 6.325 6.325 4 8.65 4 12q0 3.35 2.325 5.675Q8.65 20 12 20Zm0-8Z"/></svg>';
+        explText = document.createElement('div');
+        explText.classList.add('explText');
+        explText.innerHTML='You can hide / show the remaining ships to place by clicking the "Toggle Shipyard" button.<br>';
+        explText.innerHTML+='This will give you a better view of the board.';
+        explWrapper = document.createElement('div');
+        explWrapper.classList.add('explWrapper');
+        explWrapper.appendChild(checkmark);
+        explWrapper.appendChild(explText);
+        explanation.appendChild(explWrapper);
+
+
+
+        // explanation.innerHTML='Place your ships by dragging & dropping them on your board.<br><br>';
+        // explanation.innerHTML+='You can click a ship to rotate it.<br><br>';
+        // explanation.innerHTML+='You can hide / show the remaining ships to place by clicking the "Toggle Shipyard" button.<br>';
+        // explanation.innerHTML+='This will give you a better view of the board.';
         const okbutton = document.createElement('button');
         okbutton.classList.add('okbutton');
         okbutton.textContent='OK';
@@ -546,6 +625,9 @@ const battleship=(function app() {
         const explanation = document.createElement('div');
         explanation.classList.add('explanation');
         explanation.innerHTML=`All ships have been placed.<br><br> ${name1} can start attacking.`;
+        updateState('');
+        const handleMenu = document.querySelector('.handleMenu');
+        handleMenu.remove();
         const okbutton = document.createElement('div');
         okbutton.classList.add('okbutton');
         okbutton.textContent='OK';
