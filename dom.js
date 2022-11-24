@@ -1,8 +1,4 @@
 
-
-
-
-
 const battleship=(function app() {
     let showHint=true;
     let player1Board;
@@ -63,8 +59,6 @@ const battleship=(function app() {
         inputWrapper.appendChild(inputDiv);
         inputDiv.appendChild(name1Label);
         inputDiv.appendChild(name1Input);
-        // inputDiv.appendChild(name2Label);
-        // inputDiv.appendChild(name2Input);
         inputDiv.appendChild(battleButton);
         inputDiv.appendChild(cheatWrapper);
     
@@ -78,7 +72,6 @@ const battleship=(function app() {
         else cheatmode=false;
         this.name1=document.querySelector('.name1Input').value;
         if(this.name1==='')this.name1='Player 1';
-        // this.name2=document.querySelector('.name2Input').value;
         const inputWrapper = document.querySelector('.inputWrapper');
         inputWrapper.remove();
         //Initialize boards
@@ -167,16 +160,18 @@ const battleship=(function app() {
         shipyardWrapper.appendChild(handleMenu);
 
         function togglemenu() {
-            const shipsToPlaceWrapper = document.querySelector('.shipsToPlaceWrapper');
-            if(shipsToPlaceWrapper.classList.contains('shipyardhidden')) {
-                shipsToPlaceWrapper.classList.remove('shipyardhidden');
+            const shipsToPlaceInner = document.querySelector('.shipsToPlaceInner');
+            if(shipsToPlaceInner.classList.contains('shipyardhidden')) {
+                shipsToPlaceInner.classList.remove('shipyardhidden');
             }
-            else shipsToPlaceWrapper.classList.add('shipyardhidden');
+            else shipsToPlaceInner.classList.add('shipyardhidden');
         }
 
         //Ships to place
         const shipsToPlaceWrapper = document.createElement('div');
         const shipsToPlaceWrapperAI = document.createElement('div');
+        const shipsToPlaceInner = document.createElement('div');
+        shipsToPlaceInner.classList.add('shipsToPlaceInner');
         shipsToPlaceWrapper.classList.add('shipsToPlaceWrapper', 'shipyardDefault');
         shipsToPlaceWrapperAI.classList.add('shipsToPlaceWrapperAI');
         let toPlace=(currentGame.p1shipsToPlace.length);
@@ -191,9 +186,8 @@ const battleship=(function app() {
             shipImg.classList.add(`shipImg`);
             shipImg.src=`./assets/Ship${currentGame.p1shipsToPlace[i]}.png`;
             placeShip.appendChild(shipImg);
-            shipsToPlaceWrapper.appendChild(placeShip);
+            shipsToPlaceInner.appendChild(placeShip);
             placeShip.addEventListener('dragstart', dragStart);
-            // placeShip.addEventListener('dblclick', rotate);
             placeShip.addEventListener('click', shipSelect);
             //AI ships
             const placeShipAI = document.createElement('div');
@@ -207,6 +201,7 @@ const battleship=(function app() {
             shipsToPlaceWrapperAI.appendChild(placeShipAI);
 
         }
+        shipsToPlaceWrapper.appendChild(shipsToPlaceInner);
         const board1 = document.querySelector('.board1');
         board1.appendChild(shipsToPlaceWrapper);
         document.body.appendChild(shipsToPlaceWrapperAI);        
@@ -216,7 +211,6 @@ const battleship=(function app() {
     let touchtime=0;
     function shipSelect(e) {
         //Check if double click on mobile
-        // if (touchtime == 0)touchtime = new Date().getTime();
         if (((new Date().getTime()) - touchtime) < 500) {
             rotate(e);
             return;
@@ -241,8 +235,6 @@ const battleship=(function app() {
     function dragStart(e) {
         elementDragged = e.currentTarget;     
     }
-    
-
     function rotate(e) {
         const target=e.currentTarget;
         elementDragged=target;
@@ -509,6 +501,7 @@ const battleship=(function app() {
         inner.appendChild(okbutton);
         document.body.appendChild(backdrop);
         document.body.appendChild(wrapper);
+        wrapper.scrollIntoView();
     }
     function updateState(t, static=false) {
         const stateText = document.querySelector('.stateText');
@@ -516,7 +509,6 @@ const battleship=(function app() {
             stateText.textContent=t; 
             return;
         }
-        // stateText.textContent='';
         setTimeout(()=> {
             stateText.classList.remove('applyAnimation');
         },0);       
@@ -578,12 +570,6 @@ const battleship=(function app() {
         explWrapper.appendChild(explText);
         explanation.appendChild(explWrapper);
 
-
-
-        // explanation.innerHTML='Place your ships by dragging & dropping them on your board.<br><br>';
-        // explanation.innerHTML+='You can click a ship to rotate it.<br><br>';
-        // explanation.innerHTML+='You can hide / show the remaining ships to place by clicking the "Toggle Shipyard" button.<br>';
-        // explanation.innerHTML+='This will give you a better view of the board.';
         const okbutton = document.createElement('button');
         okbutton.classList.add('okbutton');
         okbutton.textContent='OK';
@@ -623,7 +609,7 @@ const battleship=(function app() {
         const readyDiv = document.createElement('div');
         readyDiv.classList.add('readyDiv');
         const explanation = document.createElement('div');
-        explanation.classList.add('explanation');
+        explanation.classList.add('explanationReady');
         explanation.innerHTML=`All ships have been placed.<br><br> ${name1} can start attacking.`;
         updateState('');
         const handleMenu = document.querySelector('.handleMenu');
@@ -642,6 +628,7 @@ const battleship=(function app() {
             const currentTurn = document.querySelector('.currentTurn');
             currentTurn.textContent=`Turn: ${name1}`;
         });
+        wrapper.scrollIntoView();
     }
     //----
     return {introStart, makeBoards, currentGame, gameOver};
@@ -650,9 +637,3 @@ function launch() {
     battleship.makeBoards();
 }
 battleship.introStart();
-
-
-
-
-  
-

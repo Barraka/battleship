@@ -26,8 +26,8 @@ const Gameboard = function(ai=false) {
             boardAttacks[i].push('');
         }
     };
-    // const shipsToPlace = [1,1,1,2,2,3,3,4];
-    const shipsToPlace = [3];
+    const shipsToPlace = [1,1,1,2,2,3,3,4];
+    // const shipsToPlace = [3];
     function printBoard() {
     };
     function attemptPlacement(len, x, y, orientation='h') {

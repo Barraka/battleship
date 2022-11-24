@@ -49,13 +49,10 @@ body {
 }
 /* ---- inputs ---- */
 .inputWrapper {
-    /* position: fixed; */
     top:50px;
     margin: 0 auto;
     padding: 15px;
     background-color: var(--darkBlue);
-    /* left: 50%;
-    transform: translateX(-50%); */
     border-radius: 10px;
     text-align: center;
     width: min(100vw, 400px);
@@ -100,7 +97,6 @@ body {
     top:100px;
     left:0;
     width: 100vw;
-    /* height: 100vh; */
     background-color: var(--containerBackground);
     display: flex;
     justify-content: center;
@@ -173,8 +169,6 @@ body {
     display: grid; 
     grid-template-columns: repeat(10, var(--cellSize));
     grid-template-rows: repeat(10, var(--cellSize));
-    /* background-color: rgb(127, 157, 192); */
-    /* background: radial-gradient(rgb(108, 130, 172), rgb(67, 106, 179)); */
     background-image: url('./assets/sea.jpg');
     border: 1px solid black;
     position: relative;
@@ -184,8 +178,6 @@ body {
     
     font-size: small;
     background-size: 100%;
-    /* background: radial-gradient(rgb(108, 130, 172), rgb(67, 106, 179)); */
-    /* background-color: rgb(67, 106, 179); */
 }
 .boardCellRelative {
     position: relative;
@@ -194,12 +186,14 @@ body {
     position:absolute;
     top:30px;
     left:0;
-    transition: all 0.5s ease-in-out;
-    background-color: var(--darkBlue);
-    /* border: 1px solid rgb(0,50,100); */
     padding: 5px 0;
     border-radius: 5px;
-    min-width: 200px;
+    min-width: calc(var(--cellSize) * 5);
+    overflow: hidden;
+}
+.shipsToPlaceInner {
+    background-color: var(--darkBlue);
+    transition: all 0.5s ease-in-out;
 }
 .shipsToPlaceWrapperAI {
     position:fixed;
@@ -210,8 +204,7 @@ body {
 }
 .shipyardhidden {
     transform-origin: top right;
-    transform: translateX(-50vw);
-    
+    transform: translateX(calc(var(--cellSize) * -5));
 }
 .handleMenu {
     padding: 5px 15px;
@@ -231,7 +224,6 @@ body {
     }
 }
 
-
 .placeShip {
     background-color: aquamarine;
     border: 1px solid black;
@@ -239,7 +231,6 @@ body {
     margin:1px;
     border-radius: 5px;
     overflow: hidden;
-    
 }
 .shipAIHidden {
     visibility: hidden;
@@ -268,8 +259,6 @@ body {
     color:red;
 }
 .dragoverAccepted{
-    /* outline: 2px solid green; */
-
     background: green;
 }
 .shipImg {
@@ -338,7 +327,6 @@ body {
     height: 100%;
 }
 .hint {
-    /* outline:2px solid green; */
     background-color: rgba(128,128,128,0.15);
 }
 .hint:hover {
@@ -392,7 +380,7 @@ to {
     min-width: 250px;
     color:white;
     text-align: center;
-    z-index:4;
+    z-index:9;
 }
 .readyDiv {
     display: flex;
@@ -400,7 +388,7 @@ to {
     align-items: center;
     flex-direction: column;
     gap: 10px;
-    
+    text-align: center;
 }
 .explanation {
     
@@ -411,6 +399,10 @@ to {
     flex-direction: column;
     gap: 15px;
     width: min(100vw, 400px);
+    padding: 0 5px;
+}
+.explanationReady {
+    text-align: center;
 }
 .explWrapper {
     display: flex;
@@ -425,11 +417,10 @@ to {
     padding-top: 5px;
 }
 .checkmark svg {
-    /* stroke: white; */
     fill: white;
 }
 .explText {
-    font-size: 25px;
+    font-size: 20px;
 }
 
 .okbutton {
@@ -438,7 +429,6 @@ to {
     padding: 5px 15px;
     border-radius: 5px;
     margin: 15px;
-    /* width: fit-content; */
 }
 
 
@@ -454,7 +444,6 @@ to {
     flex-direction: column;
     padding: 10px;
     text-align: center;
-    /* background-color: rgb(168, 168, 168); */
     background-color: white;
     width: 25%;
     min-width: 300px;
@@ -462,6 +451,7 @@ to {
     margin: 0 auto;
     border-radius: 10px;
     box-shadow: inset 0px 0px 10px 5px var(--bodyBackground), 0px 0px 10px 5px var(--darkBlue);
+    z-index:5;
 }
 .stateText {
     text-align: center;
